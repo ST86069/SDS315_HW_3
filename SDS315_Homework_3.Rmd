@@ -1,0 +1,196 @@
+---
+title: "Homework 3"
+author: "Shreyasi Tamhane, eid: syt333, GitHub Repo: "
+date: "2024-01-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, results = 'hide', echo = FALSE, warning=FALSE, message=FALSE}
+# import libraries
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+# import datasets
+creatinine <- read.csv("creatinine.csv")
+fin_model <- read.csv("marketmodel.csv")
+covid <- read.csv("covid.csv")
+milk <- read.csv("milk.csv")
+```
+
+### Problem 1
+
+```{r, echo=FALSE, message=FALSE}
+ggplot(creatinine, aes(x=age, y=creatclear)) +
+  geom_point(col = "lightpink") + 
+  geom_smooth(method='lm') + 
+  labs(title='Patient’s age in Years v.s. Patient’s Creatinine Clearance Rate', x="Age (years)", y='Patient’s Creatinine Clearance Rate (mL/minute)')
+```
+
+```{r, echo=FALSE, results = 'hide'}
+model_creatinine = lm(creatclear ~ age, data=creatinine)
+coef(model_creatinine)
+
+148 - 0.62*55
+
+148 - 0.62*40
+
+148 - 0.62*60
+
+135-123.2
+112-110.8
+```
+
+The fitted regression model is y-hat = 148 - 0.62x.
+
+#### Part A
+
+From a 55-year old, we can expect a creatinine clearance rate of 113.9 mL/minute. This can be determined by plugging in 55 into the fitted regression model. When you plug 55 into x in the equation, y-hat = 148 - 0.62x, you get 113.9. Additionally, by observing the graph, we can approximately pinpoint the creatinine clearance rate using the fitted regression line.
+
+#### Part B
+
+The creatinine clearance rate decreases by 0.62 mL/minute per year. This can be determined by observing the fitted regression model, y-hat = 148 - 0.62x. Since you multiply age (x-axis) by 0.6 and then subtract the product from 148, every subsequent age will decrease the creatinine clearance rate by 0.62 mL/minute. 
+
+#### Part C
+
+To determine whose creatinine clearance rate is healthier (higher) for their age: a 40-year-old with a rate of 135 or a 60-year-old with a rate of 112, we must use the fitted regression model, y-hat = 148 - 0.62x. First, we should plug in these ages into x in the model, then find the difference between the given rate and predicted rate (rate from model), and finally determine who had a higher creatinine clearance rate for their respective ages.
+
+For the 40-year old:
+1. The fitted regression model, y-hat = 148 - 0.62(40), gives us a rate of 123.2 mL/minute.
+2. The difference between the given rate, 135 mL/minute, and the predicted rate 123.2 mL/minute is 11.8 mL/minute.
+
+For the 60-year old:
+1. The fitted regression model, y-hat = 148 - 0.62(60), gives us a rate of 110.8 mL/minute.
+2. The difference between the given rate, 112 mL/minute, and the predicted rate 110.8 mL/minute is 1.2 mL/minute.
+
+Therefore, the 40-year old's creatinine clearance rate is healthier, or higher, for their age as there is a 11.8-unit difference between the given and predicted rate for their age. On the other hand, the 60-year old has only a 1.2-unit difference between the given and predicted rate for their age.
+
+### Problem 2
+
+```{r, echo=FALSE, results = 'hide'}
+# AAPL
+stocks_AAPL <- fin_model |> 
+  select(SPY, AAPL)
+
+model_AAPL = lm(AAPL ~ SPY, data=stocks_AAPL)
+int_slope_AAPL <- round(coef(model_AAPL), 4)
+
+rsquared_AAPL <- round(summary(model_AAPL)$r.squared, 4) 
+
+# GOOG
+stocks_GOOG <- fin_model |> 
+  select(SPY, GOOG)
+
+model_GOOG = lm(GOOG ~ SPY, data=stocks_GOOG)
+int_slope_GOOG <- round(coef(model_GOOG), 4)
+
+rsquared_GOOG <- round(summary(model_GOOG)$r.squared, 4) 
+
+# MRK
+stocks_MRK <- fin_model |> 
+  select(SPY, MRK)
+
+model_MRK = lm(MRK ~ SPY, data=stocks_MRK)
+int_slope_MRK <- round(coef(model_MRK), 4)
+
+rsquared_MRK <- round(summary(model_MRK)$r.squared, 4) 
+
+# JNJ
+stocks_JNJ <- fin_model |> 
+  select(SPY, JNJ)
+
+model_JNJ = lm(JNJ ~ SPY, data=stocks_JNJ)
+int_slope_JNJ <- round(coef(model_JNJ), 4)
+
+rsquared_JNJ <- round(summary(model_JNJ)$r.squared, 4) 
+
+# WMT
+stocks_WMT <- fin_model |> 
+  select(SPY, WMT)
+
+model_WMT = lm(WMT ~ SPY, data=stocks_WMT)
+int_slope_WMT <- round(coef(model_WMT), 4)
+
+rsquared_WMT <- round(summary(model_WMT)$r.squared, 4) 
+
+# TGT
+stocks_TGT <- fin_model |> 
+  select(SPY, TGT)
+
+model_TGT = lm(TGT ~ SPY, data=stocks_TGT)
+int_slope_TGT <- round(coef(model_TGT), 4)
+
+rsquared_TGT <- round(summary(model_TGT)$r.squared, 4) 
+
+```
+
+```{r, echo=FALSE, message=FALSE, results = 'hide'}
+fin_table <- tibble(
+  Ticker_Symbol = c("AAPL", "GOOG", "MRK", "JNJ", "WMT", "TGT"),
+  
+  Intercept = c(int_slope_AAPL[1], int_slope_GOOG[1], int_slope_MRK[1], int_slope_JNJ[1], int_slope_WMT[1], int_slope_TGT[1]),
+  
+  Slope = c(int_slope_AAPL[2], int_slope_GOOG[2], int_slope_MRK[2], int_slope_JNJ[2], int_slope_WMT[2], int_slope_TGT[2]),
+  
+  RSquared = c(rsquared_AAPL, rsquared_GOOG, rsquared_MRK, rsquared_JNJ, rsquared_WMT, rsquared_TGT)
+)
+```
+
+The beta of a stock is measuring how high or low of a systematic risk that stock has. To elaborate, beta is the percentage change in an asset's return given a one percent change in the market portfolio. In simpler words, when the market portfolio goes up 1%, the stock goes up beta percentage points. For instance, using some of the stocks that we have here, if the market portfolio were to go up by 1%, then the Apple stock would go up 1.0656 percentage points. However, the opposite holds true for whenever the market portfolio goes down. For instance, if the market portfolio were to go down by 1%, then the Apple stock would go down 1.0656 percentage points. Thus, a stock with a higher beta value will have a higher systematic risk compared to a stock with a lower beta value. To calculate the beta, let's reference the linear regression model: Y_t = beta_0 + beta_1*X_t + e_t. The beta is calculated by regressing the returns of individual stocks on the return of the S&P 500, which acts like the market return (X_t). We then find the coefficients, the intercept and the slope of the model, to get the beta_0 (alpha) term and beta_1 (beta) term, respectively. After finding the beta, we can see how much of a systematic risk a stock has, and how much the stock would change based on the ebb and flow of the market portfolio.
+
+```{r, echo=FALSE, message=FALSE}
+knitr::kable(fin_table, caption = "Intercept, Slope, and RSquared of 5 Stocks")
+```
+
+This table shows the intercept, slope, and r-squared of five different stocks. We can determine the beta of each of the stocks by observing the slope of each stock's regression. 
+
+To conclude, the stock that has the lowest systematic risk is Walmart, at 0.5190, while the stock that has the highest systematic risk is Apple, at 1.0656.
+
+### Problem 3
+
+```{r, echo=FALSE, message=FALSE}
+ggplot(covid) +
+   geom_line(aes(x=days_since_first_death, y=log(deaths), col=country)) + 
+  labs(title='Covid Deaths in Italy v.s. Spain', x="Days Since First Covid Death", y='Deaths')
+```
+
+```{r, echo=FALSE, results = 'hide'}
+covid_italy <- covid[covid$country == "Italy",]
+covid_spain <- covid[covid$country == "Spain",]
+
+model_covid_italy = lm(log(deaths) ~ days_since_first_death, data=covid_italy)
+coef(model_covid_italy)
+
+model_covid_spain = lm(log(deaths) ~ days_since_first_death, data=covid_spain)
+coef(model_covid_spain)
+
+# doubling time- italy
+log(2)/0.183
+
+# doubling time- spain
+log(2)/0.276
+```
+
+The growth rate for Italy is approximately 18.3%, and the doubling time is around 4 days.
+
+The growth rate for Spain is approximately 27.6%, and the doubling time is around 3 days.
+
+### Problem 4
+
+```{r, echo=FALSE, message=FALSE}
+ggplot(milk) +
+   geom_point(aes(x=log(price), y=log(sales)), col = "lightpink") + 
+  labs(title='Price of Milk v.s. Milk Sales', x="Price of Milk ($)", y='Number Participants Willing to Purchase Milk at Price')
+```
+
+```{r, echo=FALSE, results = 'hide'}
+model_milk = lm(log(sales) ~ log(price), data=milk)
+coef(model_milk)
+```
+
+The estimated price elasticity of demand for milk is around -1.62. Thus, when the price of milk increases by 1%, milk sales decrease about 1.62%. We got this amount by first fitting the data to a log scale, as the original data had an exponential curve, and it made sense to use the power law as the log scale would make the data appear linear. After plotting, we fitted a linear model to the data and then calculated the elasticity. 
+
+
